@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Mon Cahier des Lettres 🔤</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --coral:#F0997B;--pink:#D4537E;--pink-dark:#993556;
+  --green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;
+  --amber:#EF9F27;--amber-light:#FAEEDA;--amber-dark:#854F0B;
+  --red-light:#FAECE7;--red-dark:#993C1D;
+  --blue:#185FA5;--blue-light:#E6F1FB;--blue-dark:#0C447C;
+  --bg:#FFF8F5;--card:#FFFFFF;--text:#2C2020;--muted:#8A7070;
+  --border:rgba(44,32,32,0.1);--shadow:0 8px 32px rgba(212,83,126,0.13);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+.screen{display:none;flex-direction:column;height:100%;overflow:hidden}
+.screen.active{display:flex}
+
+/* ===== HOME ===== */
+#screen-home{
+  background:linear-gradient(160deg,#FFF0E8 0%,#FFE4EF 50%,#E8F8F2 100%);
+  align-items:center;justify-content:center;gap:0;padding:24px 20px;position:relative;overflow:hidden
+}
+.home-deco{position:absolute;font-size:70px;opacity:.07;pointer-events:none;animation:float 6s ease-in-out infinite}
+.home-deco:nth-child(1){top:4%;left:4%;animation-delay:0s}
+.home-deco:nth-child(2){top:8%;right:6%;animation-delay:1.2s}
+.home-deco:nth-child(3){bottom:10%;left:6%;animation-delay:2.4s}
+.home-deco:nth-child(4){bottom:6%;right:4%;animation-delay:3.6s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-14px) rotate(5deg)}}
+.home-logo{font-family:'Baloo 2',cursive;font-size:clamp(54px,14vw,96px);font-weight:800;background:linear-gradient(135deg,var(--coral),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:4px}
+.home-title{font-family:'Baloo 2',cursive;font-size:clamp(22px,6vw,34px);font-weight:800;color:var(--text);text-align:center;margin-bottom:4px}
+.home-sub{font-size:clamp(13px,3.5vw,16px);color:var(--muted);text-align:center;margin-bottom:28px}
+.progress-card{background:var(--card);border-radius:24px;padding:18px 24px;width:100%;max-width:380px;box-shadow:var(--shadow);margin-bottom:24px}
+.progress-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-align:center;text-transform:uppercase;letter-spacing:1px}
+.pbar-wrap{background:#F0E8F0;border-radius:100px;height:14px;overflow:hidden;margin-bottom:10px}
+.pbar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--coral),var(--pink));transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.pbar-stars{text-align:center;font-size:20px;letter-spacing:3px;min-height:28px}
+.btn-start{background:linear-gradient(135deg,var(--coral),var(--pink));color:white;border:none;border-radius:100px;padding:18px 48px;font-family:'Baloo 2',cursive;font-size:clamp(18px,5vw,24px);font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(212,83,126,.35);transition:transform .15s,box-shadow .15s;margin-bottom:14px}
+.btn-start:active{transform:scale(.96)}
+.btn-quiz-global{background:linear-gradient(135deg,var(--amber),#D85A30);color:white;border:none;border-radius:100px;padding:14px 36px;font-family:'Baloo 2',cursive;font-size:clamp(15px,4vw,20px);font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(186,117,23,.3);transition:transform .15s;margin-bottom:12px}
+.btn-quiz-global:active{transform:scale(.96)}
+.btn-reset{background:none;border:2px solid var(--border);border-radius:100px;padding:10px 24px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
+
+/* ===== TOP BAR ===== */
+.top-bar{background:var(--card);padding:12px 16px 10px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);flex-shrink:0;z-index:10}
+.btn-back{width:40px;height:40px;border-radius:50%;border:2px solid var(--border);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;transition:background .15s}
+.btn-back:active{background:#F0E0E8}
+.top-bar-title{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--text);flex:1}
+.top-bar-badge{font-size:13px;font-weight:700;color:var(--pink);background:#FFE8F2;padding:4px 12px;border-radius:100px;flex-shrink:0}
+
+/* ===== GRID SCREEN ===== */
+.grid-scroll{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
+.alphabet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:10px;max-width:600px;margin:0 auto 12px}
+.letter-pill{aspect-ratio:1;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s,box-shadow .15s;font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(22px,6vw,28px);color:white;position:relative;user-select:none;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.letter-pill:active{transform:scale(.93)}
+.letter-pill .pill-sub{font-size:11px;font-weight:700;opacity:.85;font-family:'Nunito',sans-serif;line-height:1}
+.letter-pill.done::after{content:'⭐';position:absolute;top:-7px;right:-7px;font-size:16px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.2))}
+.quiz-global-btn-grid{display:block;margin:0 auto 8px;background:linear-gradient(135deg,var(--amber),#D85A30);color:white;border:none;border-radius:100px;padding:14px 32px;font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(186,117,23,.3);transition:transform .15s}
+.quiz-global-btn-grid:active{transform:scale(.96)}
+
+/* ===== ACTIVITY SCREEN ===== */
+.activity-top{background:var(--card);padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);flex-shrink:0;z-index:10}
+.act-badge{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:32px;color:white;flex-shrink:0}
+.act-info{flex:1}
+.act-info h2{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--text)}
+.act-info p{font-size:13px;color:var(--muted);margin-top:2px}
+.tab-bar{display:flex;background:var(--card);border-bottom:2px solid #F0E8EE;flex-shrink:0}
+.tab-btn{flex:1;padding:11px 4px;border:none;background:none;font-family:'Nunito',sans-serif;font-size:clamp(11px,3vw,13px);font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;line-height:1.3}
+.tab-btn.active{color:var(--pink);border-bottom-color:var(--pink)}
+.activity-content{flex:1;overflow-y:auto;padding:20px 16px 32px;-webkit-overflow-scrolling:touch}
+
+/* ---- Discover ---- */
+.discover-prompt{text-align:center;font-size:15px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.word-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:460px;margin:0 auto 14px}
+.word-card{background:#FFF5F0;border:2.5px solid transparent;border-radius:20px;padding:16px 10px 14px;text-align:center;cursor:pointer;transition:transform .12s,border-color .2s,background .2s}
+.word-card:active{transform:scale(.95)}
+.word-card .wemoji{font-size:44px;margin-bottom:6px;display:block}
+.word-card .wname{font-size:16px;font-weight:900;color:var(--text)}
+.word-card .winitial{font-size:12px;color:var(--muted);margin-top:3px}
+.word-card.correct{border-color:var(--green);background:var(--green-light)}
+.word-card.correct .wname{color:var(--green-dark)}
+.word-card.wrong{border-color:#D85A30;background:var(--red-light)}
+.word-card.wrong .wname{color:var(--red-dark)}
+.feedback{text-align:center;font-size:15px;font-weight:700;color:var(--muted);min-height:22px;margin:6px 0}
+
+/* ---- Trace ---- */
+.trace-wrap{text-align:center}
+.trace-prompt{font-size:15px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.canvas-container{position:relative;display:inline-block;margin:0 auto}
+canvas#trace-canvas{border-radius:18px;border:2px solid var(--border);cursor:crosshair;background:#FFF5F0;display:block;touch-action:none}
+.trace-ghost{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Baloo 2',cursive;font-size:clamp(80px,25vw,130px);font-weight:800;opacity:.07;color:var(--text);pointer-events:none;user-select:none;line-height:1}
+.trace-actions{display:flex;gap:10px;justify-content:center;margin-top:14px}
+
+/* ---- Quiz ---- */
+.quiz-prompt{font-family:'Baloo 2',cursive;font-size:19px;font-weight:700;color:var(--text);text-align:center;margin-bottom:6px}
+.quiz-emoji-big{font-size:clamp(64px,18vw,90px);text-align:center;margin:6px 0 4px;display:block}
+.quiz-word-name{font-size:20px;font-weight:900;text-align:center;margin-bottom:16px;color:var(--text)}
+.quiz-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:380px;margin:0 auto}
+.quiz-choice{padding:16px;border-radius:16px;border:2.5px solid var(--border);background:#FFF5F0;cursor:pointer;font-family:'Baloo 2',cursive;font-size:clamp(22px,6vw,28px);font-weight:800;color:var(--text);text-align:center;transition:transform .12s,border-color .15s,background .15s}
+.quiz-choice:active{transform:scale(.94)}
+.quiz-choice.correct{border-color:var(--green);background:var(--green-light);color:var(--green-dark)}
+.quiz-choice.wrong{border-color:#D85A30;background:var(--red-light);color:var(--red-dark)}
+
+/* ---- Validate ---- */
+.validate-center{text-align:center}
+.confetti-row{font-size:clamp(28px,8vw,40px);margin:10px 0;letter-spacing:4px}
+.validate-msg{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--text);margin:8px 0}
+.validate-sub{font-size:14px;color:var(--muted);margin-bottom:20px}
+.nav-btns{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+
+/* ===== BUTTONS ===== */
+.btn-primary{background:linear-gradient(135deg,var(--coral),var(--pink));color:white;border:none;border-radius:100px;padding:14px 36px;font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(212,83,126,.3);transition:transform .15s;display:inline-block}
+.btn-primary:active{transform:scale(.96)}
+.btn-secondary{background:none;border:2px solid var(--border);border-radius:100px;padding:12px 24px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;transition:border-color .15s}
+.btn-secondary:active{border-color:var(--pink);color:var(--pink)}
+.btn-earn{background:linear-gradient(135deg,var(--amber),#D85A30);color:white;border:none;border-radius:100px;padding:16px 40px;font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(186,117,23,.3);transition:transform .15s}
+.btn-earn:active{transform:scale(.96)}
+
+/* ===== GLOBAL QUIZ SCREEN ===== */
+#screen-globalquiz{background:var(--bg)}
+.gq-top{background:var(--card);padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);flex-shrink:0}
+.gq-progress-bar-wrap{background:#F0E8F0;border-radius:100px;height:8px;overflow:hidden;flex:1}
+.gq-progress-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--amber),#D85A30);transition:width .5s}
+.gq-counter{font-size:13px;font-weight:700;color:var(--muted);flex-shrink:0;min-width:48px;text-align:right}
+.gq-content{flex:1;overflow-y:auto;padding:24px 16px 32px;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.gq-question-type{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center}
+.gq-question{font-family:'Baloo 2',cursive;font-size:clamp(18px,5vw,24px);font-weight:700;color:var(--text);text-align:center;margin-bottom:16px;line-height:1.3}
+.gq-big-letter{font-family:'Baloo 2',cursive;font-size:clamp(80px,22vw,120px);font-weight:800;text-align:center;line-height:1;margin:6px 0 16px;display:block}
+.gq-emoji-big{font-size:clamp(64px,18vw,90px);text-align:center;margin:0 0 6px;display:block}
+.gq-word-big{font-size:22px;font-weight:900;text-align:center;margin-bottom:16px;color:var(--text)}
+.gq-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:400px;width:100%;margin:0 auto}
+.gq-choice{padding:16px;border-radius:16px;border:2.5px solid var(--border);background:#FFF5F0;cursor:pointer;font-family:'Baloo 2',cursive;font-size:clamp(20px,6vw,26px);font-weight:800;color:var(--text);text-align:center;transition:transform .12s,border-color .15s,background .15s;width:100%}
+.gq-choice.word-choice{font-family:'Nunito',sans-serif;font-size:clamp(14px,4vw,18px);font-weight:900;padding:14px 10px}
+.gq-choice:active{transform:scale(.94)}
+.gq-choice.correct{border-color:var(--green);background:var(--green-light);color:var(--green-dark)}
+.gq-choice.wrong{border-color:#D85A30;background:var(--red-light);color:var(--red-dark)}
+.gq-feedback{text-align:center;font-size:15px;font-weight:700;min-height:24px;margin:12px 0 4px;color:var(--muted)}
+.gq-btn-next{display:block;margin:8px auto 0;background:linear-gradient(135deg,var(--amber),#D85A30);color:white;border:none;border-radius:100px;padding:14px 36px;font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(186,117,23,.28);transition:transform .15s;opacity:0;pointer-events:none}
+.gq-btn-next.visible{opacity:1;pointer-events:auto}
+.gq-btn-next:active{transform:scale(.96)}
+
+/* ===== RESULTS SCREEN ===== */
+#screen-results{background:linear-gradient(160deg,#FFF0E8 0%,#FFE4EF 50%,#E8F8F2 100%);align-items:center;justify-content:center;padding:24px 20px}
+.results-emoji{font-size:clamp(60px,16vw,90px);text-align:center;margin-bottom:8px;display:block;animation:bounce .6s ease-in-out}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.results-title{font-family:'Baloo 2',cursive;font-size:clamp(26px,7vw,42px);font-weight:800;text-align:center;color:var(--text);margin-bottom:6px}
+.results-sub{font-size:clamp(14px,4vw,18px);color:var(--muted);text-align:center;margin-bottom:28px}
+.results-score-card{background:var(--card);border-radius:28px;padding:24px 32px;text-align:center;box-shadow:var(--shadow);margin-bottom:24px;width:100%;max-width:340px}
+.results-score{font-family:'Baloo 2',cursive;font-size:clamp(48px,14vw,72px);font-weight:800;background:linear-gradient(135deg,var(--amber),#D85A30);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.results-score-label{font-size:14px;font-weight:700;color:var(--muted);margin-top:4px}
+.results-stars{font-size:clamp(24px,7vw,36px);margin-top:10px;letter-spacing:3px;min-height:44px}
+.results-msg{font-family:'Baloo 2',cursive;font-size:clamp(16px,4.5vw,22px);font-weight:800;color:var(--text);margin-bottom:20px;text-align:center}
+.results-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+/* ===== BADGES ===== */
+.badge{padding:5px 14px;border-radius:100px;font-size:12px;font-weight:700;font-family:'Nunito',sans-serif}
+.badge-green{background:var(--green-light);color:var(--green-dark)}
+.badge-pink{background:#FFE8F2;color:var(--pink-dark)}
+.badge-amber{background:var(--amber-light);color:var(--amber-dark)}
+.badge-row{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<!-- ======== HOME ======== -->
+<div class="screen active" id="screen-home">
+  <span class="home-deco">🔤</span>
+  <span class="home-deco">⭐</span>
+  <span class="home-deco">🎨</span>
+  <span class="home-deco">🏆</span>
+  <div class="home-logo">ABC</div>
+  <div class="home-title">Mon Cahier des Lettres</div>
+  <div class="home-sub">Apprends l'alphabet en jouant !</div>
+  <div class="progress-card">
+    <div class="progress-label" id="home-label">Lettres apprises : 0 / 26</div>
+    <div class="pbar-wrap"><div class="pbar-fill" id="home-pbar" style="width:0%"></div></div>
+    <div class="pbar-stars" id="home-stars"></div>
+  </div>
+  <button class="btn-start" onclick="showGrid()">📚 Apprendre les lettres</button>
+  <button class="btn-quiz-global" onclick="startGlobalQuiz()">🏆 Grand Quiz — 26 lettres !</button>
+  <button class="btn-reset" onclick="resetProgress()">🗑 Recommencer à zéro</button>
+</div>
+
+<!-- ======== GRID ======== -->
+<div class="screen" id="screen-grid">
+  <div class="top-bar">
+    <button class="btn-back" onclick="showHome()">←</button>
+    <div class="top-bar-title">Choisis une lettre</div>
+    <div class="top-bar-badge" id="grid-badge">0 / 26 ⭐</div>
+  </div>
+  <div class="grid-scroll">
+    <div class="alphabet-grid" id="alphabet-grid"></div>
+    <button class="quiz-global-btn-grid" onclick="startGlobalQuiz()">🏆 Grand Quiz !</button>
+  </div>
+</div>
+
+<!-- ======== ACTIVITY ======== -->
+<div class="screen" id="screen-activity">
+  <div class="activity-top">
+    <button class="btn-back" onclick="showGrid()">←</button>
+    <div class="act-badge" id="act-badge">A</div>
+    <div class="act-info">
+      <h2 id="act-title">Lettre A</h2>
+      <p id="act-sub">Son : "a" — 🍍 Ananas</p>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(0)">🔍 Découvre</button>
+    <button class="tab-btn" onclick="switchTab(1)">✏️ Trace</button>
+    <button class="tab-btn" onclick="switchTab(2)">🎯 Quiz</button>
+    <button class="tab-btn" onclick="switchTab(3)">⭐ Valide</button>
+  </div>
+  <div class="activity-content" id="activity-content"></div>
+</div>
+
+<!-- ======== GLOBAL QUIZ ======== -->
+<div class="screen" id="screen-globalquiz">
+  <div class="gq-top">
+    <button class="btn-back" onclick="showHome()">←</button>
+    <div class="gq-progress-bar-wrap">
+      <div class="gq-progress-bar-fill" id="gq-pbar" style="width:0%"></div>
+    </div>
+    <div class="gq-counter" id="gq-counter">1 / 26</div>
+  </div>
+  <div class="gq-content" id="gq-content"></div>
+</div>
+
+<!-- ======== RESULTS ======== -->
+<div class="screen" id="screen-results">
+  <span class="results-emoji" id="res-emoji">🏆</span>
+  <div class="results-title" id="res-title">Bravo !</div>
+  <div class="results-sub" id="res-sub">Tu as terminé le Grand Quiz !</div>
+  <div class="results-score-card">
+    <div class="results-score" id="res-score">26/26</div>
+    <div class="results-score-label">bonnes réponses</div>
+    <div class="results-stars" id="res-stars">⭐⭐⭐</div>
+  </div>
+  <div class="results-msg" id="res-msg">Parfait ! Tu connais tout l'alphabet !</div>
+  <div class="results-btns">
+    <button class="btn-primary" onclick="startGlobalQuiz()">🔄 Rejouer</button>
+    <button class="btn-secondary" onclick="showHome()">🏠 Accueil</button>
+  </div>
+</div>
+
+<script>
+// ===================== DATA =====================
+const LETTERS = [
+  {l:'A',color:'#E24B4A',sound:'a',   words:[{e:'🍍',n:'Ananas'},{e:'🐝',n:'Abeille'},{e:'🦅',n:'Aigle'},{e:'🌸',n:'Arbuste'}]},
+  {l:'B',color:'#D4537E',sound:'bé',  words:[{e:'🍌',n:'Banane'},{e:'🐻',n:'Ballon'},{e:'🦋',n:'Bébé'},{e:'🎈',n:'Bulle'}]},
+  {l:'C',color:'#D85A30',sound:'sé',  words:[{e:'🐱',n:'Chat'},{e:'🍒',n:'Cerise'},{e:'🚗',n:'Camion'},{e:'🐊',n:'Crocodile'}]},
+  {l:'D',color:'#185FA5',sound:'dé',  words:[{e:'🐬',n:'Dauphin'},{e:'🍩',n:'Donut'},{e:'🎲',n:'Dé'},{e:'🦌',n:'Daim'}]},
+  {l:'E',color:'#639922',sound:'eu',  words:[{e:'⭐',n:'Étoile'},{e:'🐘',n:'Éléphant'},{e:'🏫',n:'École'},{e:'🌿',n:'Épine'}]},
+  {l:'F',color:'#BA7517',sound:'ef',  words:[{e:'🌸',n:'Fleur'},{e:'🔥',n:'Feu'},{e:'🍓',n:'Fraise'},{e:'🦊',n:'Forêt'}]},
+  {l:'G',color:'#534AB7',sound:'jé',  words:[{e:'🎸',n:'Guitare'},{e:'🦒',n:'Girafe'},{e:'🍇',n:'Grapes'},{e:'🐸',n:'Grenouille'}]},
+  {l:'H',color:'#0F6E56',sound:'ash', words:[{e:'🦔',n:'Hérisson'},{e:'🌿',n:'Herbe'},{e:'🦛',n:'Hippopotame'},{e:'🏠',n:'Hibou'}]},
+  {l:'I',color:'#D4537E',sound:'i',   words:[{e:'🌈',n:'Iris'},{e:'🏝',n:'Île'},{e:'🦎',n:'Iguane'},{e:'🌷',n:'Idée'}]},
+  {l:'J',color:'#BA7517',sound:'ji',  words:[{e:'🌼',n:'Jonquille'},{e:'🦓',n:'Jaguar'},{e:'🏺',n:'Jarre'},{e:'🎭',n:'Jeu'}]},
+  {l:'K',color:'#E24B4A',sound:'ka',  words:[{e:'🐨',n:'Koala'},{e:'🦘',n:'Kangourou'},{e:'🥝',n:'Kiwi'},{e:'🪁',n:'Karaté'}]},
+  {l:'L',color:'#1D9E75',sound:'el',  words:[{e:'🦁',n:'Lion'},{e:'🌙',n:'Lune'},{e:'🐰',n:'Lapin'},{e:'🐺',n:'Loup'}]},
+  {l:'M',color:'#534AB7',sound:'em',  words:[{e:'🐒',n:'Mouton'},{e:'🌺',n:'Maison'},{e:'🦋',n:'Montre'},{e:'🍄',n:'Mouche'}]},
+  {l:'N',color:'#185FA5',sound:'en',  words:[{e:'☁️',n:'Nuage'},{e:'🌻',n:'Nid'},{e:'🍊',n:'Noisette'},{e:'🌙',n:'Nuit'}]},
+  {l:'O',color:'#D85A30',sound:'o',   words:[{e:'🐻',n:'Ours'},{e:'🌊',n:'Océan'},{e:'🦉',n:'Oiseau'},{e:'🍊',n:'Orange'}]},
+  {l:'P',color:'#D4537E',sound:'pé',  words:[{e:'🐷',n:'Poule'},{e:'🦜',n:'Perroquet'},{e:'🍑',n:'Poire'},{e:'🦋',n:'Papillon'}]},
+  {l:'Q',color:'#639922',sound:'ku',  words:[{e:'🦆',n:'Queue'},{e:'🧀',n:'Quiche'},{e:'🎯',n:'Quatre'},{e:'👑',n:'Québec'}]},
+  {l:'R',color:'#BA7517',sound:'er',  words:[{e:'🦊',n:'Renard'},{e:'🌹',n:'Rose'},{e:'🐸',n:'Rainette'},{e:'🚀',n:'Roue'}]},
+  {l:'S',color:'#E24B4A',sound:'es',  words:[{e:'🐍',n:'Serpent'},{e:'☀️',n:'Soleil'},{e:'🍓',n:'Singe'},{e:'🐭',n:'Souris'}]},
+  {l:'T',color:'#185FA5',sound:'té',  words:[{e:'🐢',n:'Tortue'},{e:'🌷',n:'Tulipe'},{e:'🐯',n:'Tigre'},{e:'🐛',n:'Taureau'}]},
+  {l:'U',color:'#534AB7',sound:'u',   words:[{e:'🦄',n:'Unicorne'},{e:'🎺',n:'Ukulélé'},{e:'🌂',n:'Usine'},{e:'🫙',n:'Urne'}]},
+  {l:'V',color:'#0F6E56',sound:'vé',  words:[{e:'🐄',n:'Vache'},{e:'🚗',n:'Voiture'},{e:'🍇',n:'Vigne'},{e:'🦅',n:'Vautour'}]},
+  {l:'W',color:'#D4537E',sound:'doublé-vé',words:[{e:'🐺',n:'Wombat'},{e:'🦮',n:'Wagon'},{e:'🌊',n:'Wapiti'},{e:'🌀',n:'Walrus'}]},
+  {l:'X',color:'#BA7517',sound:'ix',  words:[{e:'🎸',n:'Xylophone'},{e:'🐠',n:'Xénope'},{e:'🌺',n:'Xavier'},{e:'🧩',n:'Xi'}]},
+  {l:'Y',color:'#639922',sound:'i-grec',words:[{e:'🧘',n:'Yoga'},{e:'🌿',n:'Yucca'},{e:'🐃',n:'Yak'},{e:'🌼',n:'Youpi'}]},
+  {l:'Z',color:'#E24B4A',sound:'zed', words:[{e:'🦓',n:'Zèbre'},{e:'🌀',n:'Zeppelin'},{e:'🦊',n:'Zoo'},{e:'🐟',n:'Zander'}]},
+];
+
+// ===================== STATE =====================
+let discovered = new Set();
+let currentIdx = 0;
+let currentTab = 0;
+let quizAnswered = false;
+let traceCanvas, traceCtx, isDrawing = false;
+let lastX, lastY;
+
+// Global quiz state
+let gqQuestions = [];
+let gqCurrent = 0;
+let gqScore = 0;
+let gqAnswered = false;
+
+function loadProgress(){
+  try{
+    const s = localStorage.getItem('abc_done_v2');
+    if(s) discovered = new Set(JSON.parse(s));
+  }catch(e){}
+}
+function saveProgress(){
+  try{ localStorage.setItem('abc_done_v2', JSON.stringify([...discovered])); }catch(e){}
+}
+function resetProgress(){
+  if(!confirm('Effacer tout le progrès ?')) return;
+  discovered = new Set();
+  saveProgress();
+  updateHome();
+  buildGrid();
+}
+
+// ===================== SCREENS =====================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+}
+function showHome(){ updateHome(); showScreen('home'); }
+function showGrid(){ buildGrid(); showScreen('grid'); }
+
+function updateHome(){
+  const n = discovered.size;
+  document.getElementById('home-label').textContent = `Lettres apprises : ${n} / 26`;
+  document.getElementById('home-pbar').style.width = (n/26*100)+'%';
+  let stars = '';
+  for(let i=0;i<Math.min(n,10);i++) stars+='⭐';
+  document.getElementById('home-stars').textContent = stars;
+}
+
+function buildGrid(){
+  const grid = document.getElementById('alphabet-grid');
+  grid.innerHTML = '';
+  LETTERS.forEach((d,i)=>{
+    const pill = document.createElement('div');
+    pill.className = 'letter-pill'+(discovered.has(i)?' done':'');
+    pill.style.background = d.color;
+    pill.innerHTML = `${d.l}<span class="pill-sub">${d.l.toLowerCase()}</span>`;
+    pill.onclick = ()=>openLetter(i);
+    grid.appendChild(pill);
+  });
+  document.getElementById('grid-badge').textContent = `${discovered.size} / 26 ⭐`;
+}
+
+function openLetter(i){
+  currentIdx = i;
+  currentTab = 0;
+  const d = LETTERS[i];
+  const badge = document.getElementById('act-badge');
+  badge.textContent = d.l;
+  badge.style.background = d.color;
+  document.getElementById('act-title').textContent = `Lettre ${d.l}`;
+  document.getElementById('act-sub').textContent = `Son : "${d.sound}"  —  ${d.words[0].e} ${d.words[0].n}`;
+  showScreen('activity');
+  switchTab(0);
+}
+
+// ===================== TABS =====================
+function switchTab(idx){
+  currentTab = idx;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  const body = document.getElementById('activity-content');
+  if(idx===0) renderDiscover(body);
+  else if(idx===1) renderTrace(body);
+  else if(idx===2) renderQuizLetter(body);
+  else renderValidate(body);
+}
+
+// ---- DISCOVER ----
+function renderDiscover(body){
+  const d = LETTERS[currentIdx];
+  const shuffled = [...d.words].sort(()=>Math.random()-.5);
+  body.innerHTML = `
+    <p class="discover-prompt">Touche les mots qui commencent par <strong style="color:${d.color};font-size:19px">${d.l}</strong> !</p>
+    <div class="word-grid" id="word-grid"></div>
+    <div class="feedback" id="disc-fb"></div>
+    <button class="btn-primary" style="display:block;margin:8px auto 0" onclick="switchTab(1)">Suivant → ✏️</button>
+  `;
+  const grid = document.getElementById('word-grid');
+  let correctClicks = 0;
+  const correctCount = shuffled.filter(w=>w.n[0].toUpperCase()===d.l).length;
+  shuffled.forEach(w=>{
+    const isOk = w.n[0].toUpperCase()===d.l;
+    const card = document.createElement('div');
+    card.className = 'word-card';
+    card.innerHTML = `<span class="wemoji">${w.e}</span><div class="wname">${w.n}</div><div class="winitial">commence par <b>${w.n[0].toUpperCase()}</b></div>`;
+    let clicked=false;
+    card.onclick=()=>{
+      if(clicked) return; clicked=true;
+      card.classList.add(isOk?'correct':'wrong');
+      if(isOk){ correctClicks++; if(correctClicks>=correctCount) document.getElementById('disc-fb').textContent='🎉 Bravo ! Tu as tout trouvé !'; }
+      else document.getElementById('disc-fb').textContent=`🤔 "${w.n}" commence par ${w.n[0].toUpperCase()}, pas par ${d.l} !`;
+    };
+    grid.appendChild(card);
+  });
+}
+
+// ---- TRACE ----
+function renderTrace(body){
+  const d = LETTERS[currentIdx];
+  const cw = Math.min(window.innerWidth-64, 320);
+  const ch = Math.round(cw*0.6);
+  body.innerHTML = `
+    <div class="trace-wrap">
+      <p class="trace-prompt">Dessine la lettre <strong style="color:${d.color}">${d.l}</strong> sur le trait en pointillé !</p>
+      <div class="canvas-container">
+        <canvas id="trace-canvas" width="${cw}" height="${ch}" style="width:${cw}px;height:${ch}px"></canvas>
+        <div class="trace-ghost">${d.l}</div>
+      </div>
+      <div class="trace-actions">
+        <button class="btn-secondary" onclick="clearTrace()">🗑 Effacer</button>
+        <button class="btn-primary" onclick="switchTab(2)">Suivant → 🎯</button>
+      </div>
+    </div>
+  `;
+  traceCanvas = document.getElementById('trace-canvas');
+  traceCtx = traceCanvas.getContext('2d');
+  traceCtx.strokeStyle = d.color;
+  traceCtx.lineWidth = 7;
+  traceCtx.lineCap = 'round';
+  traceCtx.lineJoin = 'round';
+
+  function pos(e){
+    const r = traceCanvas.getBoundingClientRect();
+    const sx = traceCanvas.width/r.width, sy = traceCanvas.height/r.height;
+    const src = e.touches?e.touches[0]:e;
+    return {x:(src.clientX-r.left)*sx, y:(src.clientY-r.top)*sy};
+  }
+  traceCanvas.addEventListener('mousedown',e=>{isDrawing=true;const p=pos(e);traceCtx.beginPath();traceCtx.moveTo(p.x,p.y);lastX=p.x;lastY=p.y});
+  traceCanvas.addEventListener('mousemove',e=>{if(!isDrawing)return;const p=pos(e);traceCtx.lineTo(p.x,p.y);traceCtx.stroke();lastX=p.x;lastY=p.y});
+  traceCanvas.addEventListener('mouseup',()=>isDrawing=false);
+  traceCanvas.addEventListener('mouseleave',()=>isDrawing=false);
+  traceCanvas.addEventListener('touchstart',e=>{e.preventDefault();isDrawing=true;const p=pos(e);traceCtx.beginPath();traceCtx.moveTo(p.x,p.y);},{passive:false});
+  traceCanvas.addEventListener('touchmove',e=>{e.preventDefault();if(!isDrawing)return;const p=pos(e);traceCtx.lineTo(p.x,p.y);traceCtx.stroke();},{passive:false});
+  traceCanvas.addEventListener('touchend',()=>isDrawing=false);
+}
+function clearTrace(){ if(traceCtx) traceCtx.clearRect(0,0,traceCanvas.width,traceCanvas.height); }
+
+// ---- QUIZ LETTER ----
+function renderQuizLetter(body){
+  const d = LETTERS[currentIdx];
+  quizAnswered = false;
+  const wrongs = LETTERS.filter((_,i)=>i!==currentIdx).sort(()=>Math.random()-.5).slice(0,3);
+  const choices = [...wrongs.map(x=>x.l), d.l].sort(()=>Math.random()-.5);
+  const word = d.words[Math.floor(Math.random()*d.words.length)];
+  body.innerHTML = `
+    <p class="quiz-prompt">Par quelle lettre commence ce mot ?</p>
+    <span class="quiz-emoji-big">${word.e}</span>
+    <div class="quiz-word-name">${word.n}</div>
+    <div class="quiz-choices" id="lq-choices"></div>
+    <div class="feedback" id="lq-fb"></div>
+    <button class="btn-primary" style="display:block;margin:12px auto 0;opacity:0;pointer-events:none" id="lq-next" onclick="switchTab(3)">Suivant → ⭐</button>
+  `;
+  const el = document.getElementById('lq-choices');
+  choices.forEach(ch=>{
+    const btn = document.createElement('button');
+    btn.className='quiz-choice'; btn.textContent=ch;
+    btn.onclick=()=>{
+      if(quizAnswered) return; quizAnswered=true;
+      el.querySelectorAll('.quiz-choice').forEach(b=>{
+        if(b.textContent===d.l) b.classList.add('correct');
+        else if(b===btn&&b.textContent!==d.l) b.classList.add('wrong');
+      });
+      const fb=document.getElementById('lq-fb');
+      const nxt=document.getElementById('lq-next');
+      if(ch===d.l){ fb.textContent='🎉 Super ! C\'est bien la lettre '+d.l+' !'; }
+      else { fb.textContent='🤔 C\'est la lettre '+d.l+' !'; }
+      nxt.style.opacity='1'; nxt.style.pointerEvents='auto';
+    };
+    el.appendChild(btn);
+  });
+}
+
+// ---- VALIDATE ----
+function renderValidate(body){
+  const d = LETTERS[currentIdx];
+  const isDone = discovered.has(currentIdx);
+  if(isDone){
+    body.innerHTML = `
+      <div class="validate-center">
+        <div class="confetti-row">🎉⭐🎊⭐🎉</div>
+        <p class="validate-msg">Tu connais déjà la lettre ${d.l} !</p>
+        <p class="validate-sub">Continue avec une autre lettre !</p>
+        <div class="nav-btns">
+          ${currentIdx>0?`<button class="btn-secondary" onclick="openLetter(${currentIdx-1})">← ${LETTERS[currentIdx-1].l}</button>`:''}
+          ${currentIdx<25?`<button class="btn-primary" onclick="openLetter(${currentIdx+1})">${LETTERS[currentIdx+1].l} →</button>`:''}
+        </div>
+      </div>`;
+  } else {
+    body.innerHTML = `
+      <div class="validate-center">
+        <p class="validate-msg">Tu as découvert, tracé et deviné la lettre <span style="color:${d.color};font-size:24px">${d.l}</span> !</p>
+        <p class="validate-sub" style="margin-bottom:20px">Gagne ton étoile pour valider !</p>
+        <button class="btn-earn" onclick="earnStar()">⭐ Gagner mon étoile !</button>
+        <div id="earn-fb" style="margin-top:12px;min-height:20px"></div>
+      </div>`;
+  }
+}
+
+function earnStar(){
+  discovered.add(currentIdx);
+  saveProgress();
+  buildGrid();
+  updateHome();
+  const d = LETTERS[currentIdx];
+  const body = document.getElementById('activity-content');
+  body.innerHTML = `
+    <div class="validate-center">
+      <div class="confetti-row" style="font-size:40px">🎉⭐🎊</div>
+      <p class="validate-msg" style="font-size:22px">Bravo ! Tu connais la lettre ${d.l} !</p>
+      <div class="badge-row">
+        <span class="badge badge-green">⭐ Étoile gagnée !</span>
+        <span class="badge badge-pink">${discovered.size} / 26 lettres</span>
+      </div>
+      <div class="nav-btns" style="margin-top:20px">
+        ${currentIdx<25
+          ? `<button class="btn-primary" onclick="openLetter(${currentIdx+1})">Lettre suivante : ${LETTERS[currentIdx+1].l} →</button>`
+          : `<div style="font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--green)">🏆 Tu as appris tout l'alphabet !</div>`
+        }
+      </div>
+    </div>`;
+}
+
+// ===================== GLOBAL QUIZ =====================
+function buildGlobalQuestions(){
+  // 3 question types per letter: 26 × 3 = 78 questions, shuffled
+  const qs = [];
+  LETTERS.forEach((d,i)=>{
+    // Type 1: "Quelle lettre est-ce ?" — show emoji, find letter
+    const word1 = d.words[Math.floor(Math.random()*d.words.length)];
+    const wrongs1 = LETTERS.filter((_,j)=>j!==i).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.l);
+    qs.push({type:'find-letter', letter:d.l, color:d.color, emoji:word1.e, word:word1.n, choices:[...wrongs1,d.l].sort(()=>Math.random()-.5)});
+
+    // Type 2: "Quel mot commence par X ?" — show big letter, pick word
+    const correct2 = d.words[Math.floor(Math.random()*d.words.length)];
+    const wrongs2 = LETTERS.filter((_,j)=>j!==i).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.words[Math.floor(Math.random()*x.words.length)]);
+    qs.push({type:'find-word', letter:d.l, color:d.color, correct:correct2, choices:[...wrongs2,correct2].sort(()=>Math.random()-.5)});
+
+    // Type 3: "Quel est le son de cette lettre ?" — show big letter, find sound
+    const wrongs3 = LETTERS.filter((_,j)=>j!==i).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.sound);
+    qs.push({type:'find-sound', letter:d.l, color:d.color, sound:d.sound, choices:[...wrongs3,d.sound].sort(()=>Math.random()-.5)});
+  });
+  // Shuffle and take 26 questions (1 per letter, mixed types)
+  return qs.sort(()=>Math.random()-.5).slice(0,26);
+}
+
+function startGlobalQuiz(){
+  gqQuestions = buildGlobalQuestions();
+  gqCurrent = 0;
+  gqScore = 0;
+  gqAnswered = false;
+  showScreen('globalquiz');
+  renderGQQuestion();
+}
+
+function renderGQQuestion(){
+  const q = gqQuestions[gqCurrent];
+  gqAnswered = false;
+  document.getElementById('gq-counter').textContent = `${gqCurrent+1} / ${gqQuestions.length}`;
+  document.getElementById('gq-pbar').style.width = (gqCurrent/gqQuestions.length*100)+'%';
+  const body = document.getElementById('gq-content');
+
+  if(q.type==='find-letter'){
+    body.innerHTML = `
+      <div class="gq-question-type">🎯 Trouve la lettre</div>
+      <div class="gq-question">Par quelle lettre commence ce mot ?</div>
+      <span class="gq-emoji-big">${q.emoji}</span>
+      <div class="gq-word-big">${q.word}</div>
+      <div class="gq-choices" id="gq-choices"></div>
+      <div class="gq-feedback" id="gq-fb"></div>
+      <button class="gq-btn-next" id="gq-next" onclick="nextGQQuestion()">Question suivante →</button>
+    `;
+    renderGQChoices(q.choices, ch=> ch===q.letter ? q.letter : null, q.letter, ch=>`<span style="font-family:'Baloo 2',cursive;font-size:26px;font-weight:800">${ch}</span>`);
+  }
+  else if(q.type==='find-word'){
+    body.innerHTML = `
+      <div class="gq-question-type">📖 Trouve le mot</div>
+      <div class="gq-question">Quel mot commence par la lettre ?</div>
+      <span class="gq-big-letter" style="color:${q.color}">${q.letter}</span>
+      <div class="gq-choices" id="gq-choices" style="grid-template-columns:1fr 1fr"></div>
+      <div class="gq-feedback" id="gq-fb"></div>
+      <button class="gq-btn-next" id="gq-next" onclick="nextGQQuestion()">Question suivante →</button>
+    `;
+    renderGQChoices(q.choices, ch=> ch===q.correct ? q.correct.n : null, q.correct, ch=>`<span style="font-size:28px">${ch.e}</span><br><span style="font-size:14px;font-weight:900">${ch.n}</span>`, true);
+  }
+  else {
+    body.innerHTML = `
+      <div class="gq-question-type">🔊 Trouve le son</div>
+      <div class="gq-question">Quel est le son de cette lettre ?</div>
+      <span class="gq-big-letter" style="color:${q.color}">${q.letter}</span>
+      <div class="gq-choices" id="gq-choices"></div>
+      <div class="gq-feedback" id="gq-fb"></div>
+      <button class="gq-btn-next" id="gq-next" onclick="nextGQQuestion()">Question suivante →</button>
+    `;
+    renderGQChoices(q.choices, ch=> ch===q.sound ? q.sound : null, q.sound, ch=>`"${ch}"`);
+  }
+}
+
+function renderGQChoices(choices, getCorrectVal, correctVal, renderChoice, isWordType=false){
+  const el = document.getElementById('gq-choices');
+  const q = gqQuestions[gqCurrent];
+  choices.forEach(ch=>{
+    const btn = document.createElement('button');
+    btn.className = 'gq-choice'+(isWordType?' word-choice':'');
+    btn.innerHTML = renderChoice(ch);
+    const chKey = isWordType ? ch.n : ch;
+    const correctKey = isWordType ? correctVal.n : correctVal;
+    btn.onclick = ()=>{
+      if(gqAnswered) return;
+      gqAnswered = true;
+      el.querySelectorAll('.gq-choice').forEach(b=>{
+        const bKey = isWordType ? (b._wordN||'') : b.textContent.replace(/"/g,'').trim();
+        if(bKey===correctKey) b.classList.add('correct');
+        else if(b===btn&&bKey!==correctKey) b.classList.add('wrong');
+      });
+      btn._wordN = chKey;
+      if(chKey===correctKey){
+        gqScore++;
+        document.getElementById('gq-fb').textContent = ['🎉 Bravo !','⭐ Excellent !','✅ Parfait !','🌟 Super !'][Math.floor(Math.random()*4)];
+      } else {
+        const correctStr = isWordType ? correctVal.n : correctVal;
+        document.getElementById('gq-fb').textContent = `🤔 C'était : ${correctStr}`;
+      }
+      document.getElementById('gq-next').classList.add('visible');
+    };
+    btn._wordN = chKey;
+    el.appendChild(btn);
+  });
+}
+
+function nextGQQuestion(){
+  gqCurrent++;
+  if(gqCurrent>=gqQuestions.length){ showResults(); return; }
+  renderGQQuestion();
+}
+
+function showResults(){
+  document.getElementById('gq-pbar').style.width='100%';
+  const total = gqQuestions.length;
+  const pct = Math.round(gqScore/total*100);
+  let emoji='🏆', msg='', stars='⭐⭐⭐';
+  if(pct===100){ emoji='🏆'; msg='Parfait ! Tu es un champion de l\'alphabet !'; stars='⭐⭐⭐'; }
+  else if(pct>=80){ emoji='🌟'; msg='Excellent ! Continue comme ça !'; stars='⭐⭐'; }
+  else if(pct>=60){ emoji='😊'; msg='Bien joué ! Encore un peu d\'entraînement !'; stars='⭐'; }
+  else { emoji='💪'; msg='Continue à t\'entraîner, tu vas y arriver !'; stars=''; }
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-title').textContent = pct===100?'PARFAIT ! 🎊':'Terminé !';
+  document.getElementById('res-sub').textContent=`Tu as fini le Grand Quiz en ${total} questions !`;
+  document.getElementById('res-score').textContent=`${gqScore}/${total}`;
+  document.getElementById('res-stars').textContent=stars;
+  document.getElementById('res-msg').textContent=msg;
+  showScreen('results');
+}
+
+// ===================== INIT =====================
+loadProgress();
+updateHome();
+</script>
+</body>
+</html>
